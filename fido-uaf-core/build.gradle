@@ -135,7 +135,7 @@ release {
     failOnUnversionedFiles = false
     failOnCommitNeeded = false
     git {
-        requireBranch = 'release/publish'
+        requireBranch = 'master'
     }
 }
 
