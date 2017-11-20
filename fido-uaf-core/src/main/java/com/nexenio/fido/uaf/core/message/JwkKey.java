@@ -16,6 +16,7 @@
 
 package com.nexenio.fido.uaf.core.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
@@ -23,27 +24,33 @@ import lombok.Data;
 public class JwkKey {
 
     /**
-     * Denotes the key type used for Channel ID. At this time only elliptic curve is supported by [ChannelID], so it must be set to "EC" [JWA].
+     * Denotes the key type used for Channel ID. At this time only elliptic curve is supported by [ChannelID], so it
+     * must be set to "EC" [JWA].
      */
     @SerializedName("kty")
+    @JsonProperty("kty")
     private String keyType = "EC";
 
     /**
-     * Denotes the elliptic curve on which this public key is defined. At this time only the NIST curve secp256r1 is supported by [ChannelID], so the ellipticCurve parameter must be set to "P-256".
+     * Denotes the elliptic curve on which this public key is defined. At this time only the NIST curve secp256r1 is
+     * supported by [ChannelID], so the ellipticCurve parameter must be set to "P-256".
      */
     @SerializedName("crv")
+    @JsonProperty("crv")
     private String ellipticCurve = "P-256";
 
     /**
      * Contains the base64url-encoding of the x coordinate of the public key (big-endian, 32-byte value).
      */
     @SerializedName("x")
+    @JsonProperty("x")
     private String x;
 
     /**
      * Contains the base64url-encoding of the y coordinate of the public key (big-endian, 32-byte value).
      */
     @SerializedName("y")
+    @JsonProperty("y")
     private String y;
 
 }

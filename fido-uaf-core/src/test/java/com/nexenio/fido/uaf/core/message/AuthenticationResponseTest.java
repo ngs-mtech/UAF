@@ -1,12 +1,10 @@
 package com.nexenio.fido.uaf.core.message;
 
+import static org.junit.Assert.*;
+
 import com.google.gson.Gson;
-import org.junit.Test;
-
 import java.util.logging.Logger;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.*;
 
 public class AuthenticationResponseTest {
 
@@ -24,9 +22,10 @@ public class AuthenticationResponseTest {
     public void extInAssertionsNotNull() {
         AuthenticationResponse authResponse = gson.fromJson(getTestAuthResponse(), AuthenticationResponse.class);
         assertNotNull(authResponse);
+        assertNotNull(authResponse.getOperationHeader().getOperation());
         String json = gson.toJson(authResponse);
         logger.info(json);
-        assertTrue(!json.contains("null"));
+        assertTrue(! json.contains("null"));
     }
 
     @Test
@@ -37,7 +36,7 @@ public class AuthenticationResponseTest {
         authResponse.getAssertions()[0].setAssertion("SOMETHING");
         String json = gson.toJson(authResponse);
         logger.info(json);
-        assertTrue(!json.contains("null"));
+        assertTrue(! json.contains("null"));
         assertTrue(json.contains("SOMETHING"));
     }
 

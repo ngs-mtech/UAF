@@ -16,6 +16,7 @@
 
 package com.nexenio.fido.uaf.core.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
@@ -23,11 +24,12 @@ import lombok.Data;
 public class MatchCriteria {
 
     /**
-     * List of AAIDs, causing matching to be restricted to certain AAIDs.
-     * The match succeeds if at least one AAID entry in this array matches AuthenticatorInfo.aaids [UAFASM].
-     * Note: This field corresponds to MetadataStatement.aaids [UAFAuthnrMetadata].
+     * List of AAIDs, causing matching to be restricted to certain AAIDs. The match succeeds if at least one AAID entry
+     * in this array matches AuthenticatorInfo.aaids [UAFASM]. Note: This field corresponds to MetadataStatement.aaids
+     * [UAFAuthnrMetadata].
      */
     @SerializedName("aaid")
+    @JsonProperty("aaid")
     private String[] aaids;
 
 }

@@ -16,6 +16,7 @@
 
 package com.nexenio.fido.uaf.core.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
@@ -26,18 +27,22 @@ public class RegistrationResponse {
      * Header.op must be "Reg".
      */
     @SerializedName("header")
+    @JsonProperty("header")
     private OperationHeader operationHeader;
 
     /**
-     * The base64url-encoded serialized [RFC4627] FinalChallengeParams using UTF8 encoding (see FinalChallengeParams dictionary) which contains all parameters required for the server to verify the Final Challenge.
+     * The base64url-encoded serialized [RFC4627] FinalChallengeParams using UTF8 encoding (see FinalChallengeParams
+     * dictionary) which contains all parameters required for the server to verify the Final Challenge.
      */
     @SerializedName("fcParams")
+    @JsonProperty("fcParams")
     private String finalChallengeParams;
 
     /**
      * Response data for each Authenticator being registered.
      */
     @SerializedName("assertions")
+    @JsonProperty("assertions")
     private AuthenticatorRegistrationAssertion[] assertions;
 
 }
