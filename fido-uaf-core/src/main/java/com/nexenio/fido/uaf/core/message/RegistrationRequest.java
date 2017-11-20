@@ -16,6 +16,7 @@
 
 package com.nexenio.fido.uaf.core.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
@@ -26,24 +27,29 @@ public class RegistrationRequest {
      * Operation operationHeader. Header.op must be "Reg".
      */
     @SerializedName("header")
+    @JsonProperty("header")
     private OperationHeader operationHeader;
 
     /**
      * Server-provided challenge value
      */
     @SerializedName("challenge")
+    @JsonProperty("challenge")
     private String challenge;
 
     /**
-     * A human-readable user name intended to allow the user to distinguish and select from among different accounts at the same relying party.
+     * A human-readable user name intended to allow the user to distinguish and select from among different accounts at
+     * the same relying party.
      */
     @SerializedName("username")
+    @JsonProperty("username")
     private String userName;
 
     /**
      * Describes which types of authenticators are acceptable for this registration operation.
      */
     @SerializedName("policy")
+    @JsonProperty("policy")
     private Policy policy;
 
 }

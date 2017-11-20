@@ -16,6 +16,7 @@
 
 package com.nexenio.fido.uaf.core.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
@@ -32,6 +33,7 @@ public class ChannelBinding {
      * This field must be absent if the TLS server certificate is not available to the processing entity (e.g., the FIDO UAF Client) or the hash function cannot be determined as described.
      */
     @SerializedName("serverEndPoint")
+    @JsonProperty("serverEndPoint")
     private String serverEndpoint;
 
     /**
@@ -39,12 +41,14 @@ public class ChannelBinding {
      * This field must be set to the base64url-encoded, DER-encoded TLS server certificate, if this data is available to the FIDO UAF Client.
      */
     @SerializedName("tlsServerCertificate")
+    @JsonProperty("tlsServerCertificate")
     private String tlsServerCertificate;
 
     /**
      * Must be set to the base64url-encoded TLS channel Finished structure. It must, however, be absent, if this data is not available to the FIDO UAF Client [RFC5929].
      */
     @SerializedName("tlsUnique")
+    @JsonProperty("tlsUnique")
     private String tlsUnique;
 
     /**
@@ -53,6 +57,7 @@ public class ChannelBinding {
      * Otherwise, it must be set to the base64url-encoded serialized [RFC4627] JwkKey structure using UTF-8 encoding.
      */
     @SerializedName("cid_pubkey")
+    @JsonProperty("cid_pubkey")
     private String channelIdPublicKey;
 
 }

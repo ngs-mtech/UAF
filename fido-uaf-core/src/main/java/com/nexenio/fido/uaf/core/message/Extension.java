@@ -16,6 +16,7 @@
 
 package com.nexenio.fido.uaf.core.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
@@ -26,6 +27,7 @@ public class Extension {
      * Identifies the extension.
      */
     @SerializedName("id")
+    @JsonProperty("id")
     private String id;
 
     /**
@@ -33,6 +35,7 @@ public class Extension {
      * This field may be empty.
      */
     @SerializedName("data")
+    @JsonProperty("data")
     private String data;
 
     /**
@@ -43,6 +46,7 @@ public class Extension {
      * </li>
      */
     @SerializedName("fail_if_unknown")
+    @JsonProperty("fail_if_unknown")
     private boolean failIfUnknown;
 
 }
