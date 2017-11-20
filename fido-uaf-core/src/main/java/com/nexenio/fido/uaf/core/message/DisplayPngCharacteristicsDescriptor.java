@@ -16,6 +16,7 @@
 
 package com.nexenio.fido.uaf.core.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
@@ -26,48 +27,56 @@ public class DisplayPngCharacteristicsDescriptor {
      * Image width.
      */
     @SerializedName("width")
+    @JsonProperty("width")
     private long width;
 
     /**
      * Image height.
      */
     @SerializedName("height")
+    @JsonProperty("height")
     private long height;
 
     /**
      * Bit depth - bits per sample or per palette index.
      */
     @SerializedName("bitDepth")
+    @JsonProperty("bitDepth")
     private String bitDepth;
 
     /**
      * Color type defines the PNG image type.
      */
     @SerializedName("colorType")
+    @JsonProperty("colorType")
     private String colorType;
 
     /**
      * Compression method used to compress the image data.
      */
     @SerializedName("compression")
+    @JsonProperty("compression")
     private String compression;
 
     /**
      * Filter method is the preprocessing method applied to the image data before compression.
      */
     @SerializedName("filter")
+    @JsonProperty("filter")
     private String filter;
 
     /**
      * Interlace method is the transmission order of the image data.
      */
     @SerializedName("interlace")
+    @JsonProperty("interlace")
     private String interlace;
 
     /**
      * 1 to 256 palette entries
      */
     @SerializedName("plte")
+    @JsonProperty("plte")
     private RgbPaletteEntry[] rgbPaletteEntries;
 
 }

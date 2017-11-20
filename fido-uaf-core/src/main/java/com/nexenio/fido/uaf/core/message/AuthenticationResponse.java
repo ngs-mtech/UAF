@@ -16,6 +16,7 @@
 
 package com.nexenio.fido.uaf.core.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
@@ -26,6 +27,7 @@ public class AuthenticationResponse {
      * Must be "AUTHENTICATION"
      */
     @SerializedName("header")
+    @JsonProperty("header")
     private OperationHeader operationHeader;
 
     /**
@@ -33,12 +35,14 @@ public class AuthenticationResponse {
      */
 
     @SerializedName("fcParams")
+    @JsonProperty("fcParams")
     private String finalChallengeParams;
 
     /**
      * The list of authenticator responses related to this operation.
      */
     @SerializedName("assertions")
+    @JsonProperty("assertions")
     private AuthenticatorSignAssertion[] assertions;
 
 }

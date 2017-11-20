@@ -16,6 +16,7 @@
 
 package com.nexenio.fido.uaf.core.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
@@ -26,12 +27,14 @@ public class DeregisterAuthenticator {
      * AAID of the authenticator to deregister.
      */
     @SerializedName("aaid")
+    @JsonProperty("aaid")
     private String aaid;
 
     /**
      * The unique KeyID related to UAuth.priv. KeyID is assumed to be unique within the scope of an AAID only.
      */
     @SerializedName("keyID")
+    @JsonProperty("keyID")
     private String keyId;
 
 }

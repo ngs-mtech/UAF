@@ -16,6 +16,7 @@
 
 package com.nexenio.fido.uaf.core.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
@@ -26,12 +27,14 @@ public class AuthenticationRequest {
      * Must be "AUTHENTICATION"
      */
     @SerializedName("header")
+    @JsonProperty("header")
     private OperationHeader operationHeader;
 
     /**
      * Server-provided challenge value
      */
     @SerializedName("challenge")
+    @JsonProperty("challenge")
     private String challenge;
 
     /**
@@ -39,12 +42,14 @@ public class AuthenticationRequest {
      * The list contains the same transactions content in various content types and various image sizes. Refer to UAFAuthnrMetadata for more information about Transaction Confirmation Display characteristics.
      */
     @SerializedName("transaction")
+    @JsonProperty("transaction")
     private Transaction[] transactions;
 
     /**
      * Server-provided policy defining what types of authenticators are acceptable for this authentication operation.
      */
     @SerializedName("policy")
+    @JsonProperty("policy")
     private Policy policy;
 
 }

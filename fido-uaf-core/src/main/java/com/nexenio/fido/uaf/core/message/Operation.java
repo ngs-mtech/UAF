@@ -16,8 +16,19 @@
 
 package com.nexenio.fido.uaf.core.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
+
 public enum Operation {
+    @SerializedName("Reg")
+    @JsonProperty("Reg")
     REGISTRATION,
+
+    @SerializedName("Dereg")
+    @JsonProperty("Dereg")
     DEREGISTRATION,
+
+    @SerializedName("Auth")
+    @JsonProperty("Auth")
     AUTHENTICATION
 }
