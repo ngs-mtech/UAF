@@ -17,23 +17,16 @@
 package com.nexenio.fido.uaf.core.operation.authentication;
 
 import com.nexenio.fido.uaf.core.crypto.*;
-import com.nexenio.fido.uaf.core.message.AuthenticationResponse;
-import com.nexenio.fido.uaf.core.message.AuthenticatorSignAssertion;
-import com.nexenio.fido.uaf.core.message.FinalChallengeParams;
-import com.nexenio.fido.uaf.core.message.Version;
+import com.nexenio.fido.uaf.core.message.*;
 import com.nexenio.fido.uaf.core.operation.*;
-import com.nexenio.fido.uaf.core.storage.AuthenticatorRecord;
-import com.nexenio.fido.uaf.core.storage.RegistrationRecord;
-import com.nexenio.fido.uaf.core.storage.StorageInterface;
+import com.nexenio.fido.uaf.core.storage.*;
 import com.nexenio.fido.uaf.core.tlv.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.PublicKey;
 import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.jce.interfaces.ECPublicKey;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.security.*;
-import java.security.spec.InvalidKeySpecException;
 
 public class AuthenticationResponseProcessing {
 
@@ -49,7 +42,10 @@ public class AuthenticationResponseProcessing {
         this.notary = notary;
     }
 
-    public AuthenticatorRecord[] verify(AuthenticationResponse response, StorageInterface serverData) throws VersionException, ServerDataExpiredException, ServerDataSignatureNotMatchException, ServerDataCheckFailedException {
+    public AuthenticatorRecord[] verify(AuthenticationResponse response, StorageInterface serverData)
+        throws VersionException, ServerDataExpiredException, ServerDataSignatureNotMatchException,
+        ServerDataCheckFailedException {
+
         AuthenticatorRecord[] result = new AuthenticatorRecord[response.getAssertions().length];
         checkVersion(response.getOperationHeader().getProtocolVersion());
         checkServerData(response.getOperationHeader().getServerData(), result);
@@ -61,7 +57,8 @@ public class AuthenticationResponseProcessing {
         return result;
     }
 
-    private AuthenticatorRecord processAssertions(AuthenticatorSignAssertion authenticatorSignAssertion, StorageInterface storage) {
+    private AuthenticatorRecord processAssertions(AuthenticatorSignAssertion authenticatorSignAssertion,
+                                                  StorageInterface storage) {
         TlvAssertionParser parser = new TlvAssertionParser();
         AuthenticatorRecord authRecord = new AuthenticatorRecord();
         RegistrationRecord registrationRecord;
@@ -79,20 +76,20 @@ public class AuthenticationResponseProcessing {
             AlgAndEncodingEnum algAndEncoding = getAlgAndEncoding(info);
             String pubKey = registrationRecord.getPublicKey();
             try {
-                if (!verifySignature(signnedData, signature, pubKey, algAndEncoding)) {
-                    authRecord.setStatus("FAILED_SIGNATURE_NOT_VALID");
+                if (! verifySignature(signnedData, signature, pubKey, algAndEncoding)) {
+                    authRecord.setStatus(RecordStatus.FAILED_SIGNATURE_NOT_VALID);
                     return authRecord;
                 }
             } catch (SignatureVerificationException e) {
-                authRecord.setStatus("FAILED_SIGNATURE_VERIFICATION");
+                authRecord.setStatus(RecordStatus.FAILED_SIGNATURE_VERIFICATION);
                 return authRecord;
             }
             authRecord.setUserName(registrationRecord.getUserName());
             authRecord.setDeviceId(registrationRecord.getDeviceId());
-            authRecord.setStatus("SUCCESS");
+            authRecord.setStatus(RecordStatus.SUCCESS);
             return authRecord;
         } catch (IOException e) {
-            authRecord.setStatus("FAILED_ASSERTION_VERIFICATION");
+            authRecord.setStatus(RecordStatus.FAILED_ASSERTION_VERIFICATION);
             return authRecord;
         }
     }
@@ -110,12 +107,16 @@ public class AuthenticationResponseProcessing {
         return ret;
     }
 
-    private boolean verifySignature(Tag signedData, Tag signature, String pubKey, AlgAndEncodingEnum algAndEncoding) throws SignatureVerificationException {
+    private boolean verifySignature(Tag signedData,
+                                    Tag signature,
+                                    String pubKey,
+                                    AlgAndEncodingEnum algAndEncoding) throws SignatureVerificationException {
         try {
             byte[] dataForSigning = getDataForSigning(signedData);
 
             // TODO: check if this works
-            // return NamedCurve.verify(KeyCodec.getKeyAsRawBytes(pubKey), dataForSigning, Asn1.decodeToBigIntegerArray(signature.value));
+            // return NamedCurve.verify(KeyCodec.getKeyAsRawBytes(pubKey), dataForSigning,
+            // Asn1.decodeToBigIntegerArray(signature.value));
 
             byte[] decodeBase64 = Base64.decodeBase64(pubKey);
             if (algAndEncoding == AlgAndEncodingEnum.UAF_ALG_SIGN_RSASSA_PSS_SHA256_RAW) {
@@ -123,45 +124,52 @@ public class AuthenticationResponseProcessing {
                 return RSA.verifyPSS(publicKey, SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256), signature.value);
             } else if (algAndEncoding == AlgAndEncodingEnum.UAF_ALG_SIGN_RSASSA_PSS_SHA256_DER) {
                 PublicKey publicKey = KeyCodec.getRSAPublicKey(new DEROctetString(decodeBase64).getOctets());
-                return RSA.verifyPSS(publicKey, SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256), new DEROctetString(signature.value).getOctets());
+                return RSA.verifyPSS(publicKey,
+                                     SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256),
+                                     new DEROctetString(signature.value).getOctets());
             } else {
                 if (algAndEncoding == AlgAndEncodingEnum.UAF_ALG_SIGN_SECP256K1_ECDSA_SHA256_DER) {
-                    ECPublicKey decodedPub = (ECPublicKey) KeyCodec.getPubKeyFromCurve(decodeBase64, KeyCodec.CURVE_SECP256_K1);
+                    ECPublicKey decodedPub = (ECPublicKey) KeyCodec.getPubKeyFromCurve(decodeBase64,
+                                                                                       KeyCodec.CURVE_SECP256_K1);
                     return NamedCurve.verifyUsingSecp256k1(
-                            KeyCodec.getKeyAsRawBytes(decodedPub),
-                            SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256),
-                            Asn1.decodeToBigIntegerArray(signature.value));
+                        KeyCodec.getKeyAsRawBytes(decodedPub),
+                        SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256),
+                        Asn1.decodeToBigIntegerArray(signature.value));
                 }
                 if (algAndEncoding == AlgAndEncodingEnum.UAF_ALG_SIGN_SECP256R1_ECDSA_SHA256_DER) {
                     if (decodeBase64.length > 65) {
                         return NamedCurve.verifyUsingSecp256r1(
-                                KeyCodec.getKeyAsRawBytes(pubKey),
-                                SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256),
-                                Asn1.decodeToBigIntegerArray(signature.value));
-                    } else {
-                        ECPublicKey decodedPub = (ECPublicKey) KeyCodec.getPubKeyFromCurve(decodeBase64, KeyCodec.CURVE_SECP256_R1);
-                        return NamedCurve.verifyUsingSecp256r1(
-                                KeyCodec.getKeyAsRawBytes(decodedPub),
-                                SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256),
-                                Asn1.decodeToBigIntegerArray(signature.value));
-                    }
-                }
-                if (signature.value.length == 64) {
-                    ECPublicKey decodedPub = (ECPublicKey) KeyCodec.getPubKeyFromCurve(decodeBase64, KeyCodec.CURVE_SECP256_R1);
-                    return NamedCurve.verifyUsingSecp256r1(KeyCodec.getKeyAsRawBytes(decodedPub),
-                            SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256),
-                            Asn1.transformRawSignature(signature.value));
-                } else if (65 == decodeBase64.length && AlgAndEncodingEnum.UAF_ALG_SIGN_SECP256R1_ECDSA_SHA256_DER == algAndEncoding) {
-                    ECPublicKey decodedPub = (ECPublicKey) KeyCodec.getPubKeyFromCurve(decodeBase64, KeyCodec.CURVE_SECP256_R1);
-                    return NamedCurve.verifyUsingSecp256r1(
-                            KeyCodec.getKeyAsRawBytes(decodedPub),
-                            SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256),
-                            Asn1.decodeToBigIntegerArray(signature.value));
-                } else {
-                    return NamedCurve.verifyUsingSecp256r1(
                             KeyCodec.getKeyAsRawBytes(pubKey),
                             SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256),
                             Asn1.decodeToBigIntegerArray(signature.value));
+                    } else {
+                        ECPublicKey decodedPub = (ECPublicKey) KeyCodec.getPubKeyFromCurve(decodeBase64,
+                                                                                           KeyCodec.CURVE_SECP256_R1);
+                        return NamedCurve.verifyUsingSecp256r1(
+                            KeyCodec.getKeyAsRawBytes(decodedPub),
+                            SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256),
+                            Asn1.decodeToBigIntegerArray(signature.value));
+                    }
+                }
+                if (signature.value.length == 64) {
+                    ECPublicKey decodedPub = (ECPublicKey) KeyCodec.getPubKeyFromCurve(decodeBase64,
+                                                                                       KeyCodec.CURVE_SECP256_R1);
+                    return NamedCurve.verifyUsingSecp256r1(KeyCodec.getKeyAsRawBytes(decodedPub),
+                                                           SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256),
+                                                           Asn1.transformRawSignature(signature.value));
+                } else if (65 == decodeBase64.length && AlgAndEncodingEnum.UAF_ALG_SIGN_SECP256R1_ECDSA_SHA256_DER ==
+                    algAndEncoding) {
+                    ECPublicKey decodedPub = (ECPublicKey) KeyCodec.getPubKeyFromCurve(decodeBase64,
+                                                                                       KeyCodec.CURVE_SECP256_R1);
+                    return NamedCurve.verifyUsingSecp256r1(
+                        KeyCodec.getKeyAsRawBytes(decodedPub),
+                        SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256),
+                        Asn1.decodeToBigIntegerArray(signature.value));
+                } else {
+                    return NamedCurve.verifyUsingSecp256r1(
+                        KeyCodec.getKeyAsRawBytes(pubKey),
+                        SHA.sha(dataForSigning, SHA.ALGORITHM_SHA_256),
+                        Asn1.decodeToBigIntegerArray(signature.value));
                 }
             }
         } catch (Exception e) {
@@ -197,7 +205,8 @@ public class AuthenticationResponseProcessing {
         // TODO: implement?
     }
 
-    private void checkServerData(String serverDataB64, AuthenticatorRecord[] records) throws ServerDataExpiredException, ServerDataSignatureNotMatchException, ServerDataCheckFailedException {
+    private void checkServerData(String serverDataB64, AuthenticatorRecord[] records)
+        throws ServerDataExpiredException, ServerDataSignatureNotMatchException, ServerDataCheckFailedException {
         if (notary == null) {
             return;
         }
@@ -209,30 +218,31 @@ public class AuthenticationResponseProcessing {
             timeStamp = tokens[1];
             challenge = tokens[2];
             dataToSign = timeStamp + "." + challenge;
-            if (!notary.verify(dataToSign, signature)) {
+            if (! notary.verify(dataToSign, signature)) {
                 throw new ServerDataSignatureNotMatchException();
             }
             if (isExpired(timeStamp)) {
                 throw new ServerDataExpiredException();
             }
         } catch (ServerDataExpiredException e) {
-            setErrorStatus(records, "INVALID_SERVER_DATA_EXPIRED");
+            setErrorStatus(records, RecordStatus.INVALID_SERVER_DATA_EXPIRED);
             throw new ServerDataExpiredException("Server data expired", e);
         } catch (ServerDataSignatureNotMatchException e) {
-            setErrorStatus(records, "INVALID_SERVER_DATA_SIGNATURE_NO_MATCH");
+            setErrorStatus(records, RecordStatus.INVALID_SERVER_DATA_SIGNATURE_NO_MATCH);
             throw new ServerDataSignatureNotMatchException("Server data signature did not match", e);
         } catch (Exception e) {
-            setErrorStatus(records, "INVALID_SERVER_DATA_CHECK_FAILED");
+            setErrorStatus(records, RecordStatus.INVALID_SERVER_DATA_CHECK_FAILED);
             throw new ServerDataCheckFailedException("Server data check failed", e);
         }
 
     }
 
     private boolean isExpired(String timeStamp) {
-        return Long.parseLong(new String(Base64.decodeBase64(timeStamp))) + serverDataExpiry < System.currentTimeMillis();
+        return Long.parseLong(new String(Base64.decodeBase64(timeStamp))) + serverDataExpiry < System
+            .currentTimeMillis();
     }
 
-    private void setErrorStatus(AuthenticatorRecord[] records, String status) {
+    private void setErrorStatus(AuthenticatorRecord[] records, RecordStatus status) {
         if (records == null || records.length == 0) {
             return;
         }
