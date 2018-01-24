@@ -18,6 +18,8 @@ package com.nexenio.fido.uaf.core.message;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -51,6 +53,6 @@ public class AuthenticatorRegistrationAssertion {
      */
     @SerializedName("exts")
     @JsonProperty("exts")
-    private Extension[] extensions;
+    private List<Extension> extensions = new ArrayList<>();
 
 }
