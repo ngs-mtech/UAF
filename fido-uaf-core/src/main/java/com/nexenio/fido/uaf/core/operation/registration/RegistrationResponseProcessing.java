@@ -16,27 +16,16 @@
 
 package com.nexenio.fido.uaf.core.operation.registration;
 
+import static com.nexenio.fido.uaf.core.message.RecordStatus.*;
+
 import com.google.gson.Gson;
-import com.nexenio.fido.uaf.core.crypto.CertificateValidator;
-import com.nexenio.fido.uaf.core.crypto.CertificateValidatorImpl;
-import com.nexenio.fido.uaf.core.crypto.CertificateVerificationException;
-import com.nexenio.fido.uaf.core.crypto.Notary;
+import com.nexenio.fido.uaf.core.crypto.*;
 import com.nexenio.fido.uaf.core.message.*;
 import com.nexenio.fido.uaf.core.operation.*;
-import com.nexenio.fido.uaf.core.storage.AuthenticatorRecord;
-import com.nexenio.fido.uaf.core.storage.RegistrationRecord;
+import com.nexenio.fido.uaf.core.storage.*;
 import com.nexenio.fido.uaf.core.tlv.*;
-import org.apache.commons.codec.binary.Base64;
-
-import java.io.IOException;
-import java.security.*;
-import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static com.nexenio.fido.uaf.core.message.RecordStatus.INVALID_SERVER_DATA_EXPIRED;
-import static com.nexenio.fido.uaf.core.message.RecordStatus.INVALID_SERVER_DATA_SIGNATURE_NO_MATCH;
+import org.apache.commons.codec.binary.Base64;
 
 public class RegistrationResponseProcessing {
 
@@ -63,13 +52,13 @@ public class RegistrationResponseProcessing {
 
     public RegistrationRecord[] processResponse(RegistrationResponse response) throws AssertionException, VersionException, ServerDataSignatureNotMatchException, ServerDataExpiredException {
         checkAssertions(response);
-        RegistrationRecord[] records = new RegistrationRecord[response.getAssertions().length];
+        RegistrationRecord[] records = new RegistrationRecord[response.getAssertions().size()];
         checkVersion(response.getOperationHeader().getProtocolVersion());
         checkServerData(response.getOperationHeader().getServerData(), records);
         FinalChallengeParams fcp = getFcp(response);
         checkFcp(fcp);
         for (int i = 0; i < records.length; i++) {
-            records[i] = processAssertions(response.getAssertions()[i], records[i]);
+            records[i] = processAssertions(response.getAssertions().get(i), records[i]);
         }
         return records;
     }
@@ -137,7 +126,7 @@ public class RegistrationResponseProcessing {
     }
 
     private void checkAssertions(RegistrationResponse response) throws AssertionException {
-        if (response.getAssertions() == null || response.getAssertions().length <= 0) {
+        if (response.getAssertions() == null || response.getAssertions().isEmpty()) {
             throw new AssertionException("Missing assertions in registration response");
         }
     }

@@ -31,9 +31,9 @@ public class AuthenticationResponseTest {
     @Test
     public void noNullInJson() {
         AuthenticationResponse authResponse = new AuthenticationResponse();
-        authResponse.setAssertions(new AuthenticatorSignAssertion[1]);
-        authResponse.getAssertions()[0] = new AuthenticatorSignAssertion();
-        authResponse.getAssertions()[0].setAssertion("SOMETHING");
+
+        authResponse.getAssertions().add(new AuthenticatorSignAssertion().setAssertion("SOMETHING"));
+
         String json = gson.toJson(authResponse);
         logger.info(json);
         assertTrue(! json.contains("null"));

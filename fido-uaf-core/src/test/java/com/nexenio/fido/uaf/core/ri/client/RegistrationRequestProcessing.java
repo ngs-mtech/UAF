@@ -26,7 +26,11 @@ public class RegistrationRequestProcessing {
 
     public RegistrationRequestProcessing() {
         // Example from spec document
-        assertion = "AT7uAgM-sQALLgkAQUJDRCNBQkNEDi4HAAABAQEAAAEKLiAA9tBzZC64ecgVQBGSQb5QtEIPC8-Vav4HsHLZDflLaugJLiAAZMCPn92yHv1Ip-iCiBb6i4ADq6ZOv569KFQCvYSJfNgNLggAAQAAAAEAAAAMLkEABJsvEtUsVKh7tmYHhJ2FBm3kHU-OCdWiUYVijgYa81MfkjQ1z6UiHbKP9_nRzIN9anprHqDGcR6q7O20q_yctZAHPjUCBi5AACv8L7YlRMx10gPnszGO6rLFqZFmmRkhtV0TIWuWqYxd1jO0wxam7i5qdEa19u4sfpHFZ9RGI_WHxINkH8FfvAwFLu0BMIIB6TCCAY8CAQEwCQYHKoZIzj0EATB7MQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExCzAJBgNVBAcMAlBBMRAwDgYDVQQKDAdOTkwsSW5jMQ0wCwYDVQQLDAREQU4xMRMwEQYDVQQDDApOTkwsSW5jIENBMRwwGgYJKoZIhvcNAQkBFg1ubmxAZ21haWwuY29tMB4XDTE0MDgyODIxMzU0MFoXDTE3MDUyNDIxMzU0MFowgYYxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJDQTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzEQMA4GA1UECgwHTk5MLEluYzENMAsGA1UECwwEREFOMTETMBEGA1UEAwwKTk5MLEluYyBDQTEcMBoGCSqGSIb3DQEJARYNbm5sQGdtYWlsLmNvbTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCGBt3CIjnDowzSiF68C2aErYXnDUsWXOYxqIPim0OWg9FFdUYCa6AgKjn1R99Ek2d803sGKROivnavmdVH-SnEwCQYHKoZIzj0EAQNJADBGAiEAzAQujXnSS9AIAh6lGz6ydypLVTsTnBzqGJ4ypIqy_qUCIQCFsuOEGcRV-o4GHPBph_VMrG3NpYh2GKPjsAim_cSNmQ";
+        assertion = "AT7uAgM-sQALLgkAQUJDRCNBQkNEDi4HAAABAQEAAAEKLiAA9tBzZC64ecgVQBGSQb5QtEIPC8"
+            + "-Vav4HsHLZDflLaugJLiAAZMCPn92yHv1Ip"
+            + "-iCiBb6i4ADq6ZOv569KFQCvYSJfNgNLggAAQAAAAEAAAAMLkEABJsvEtUsVKh7tmYHhJ2FBm3kHU"
+            +
+            "-OCdWiUYVijgYa81MfkjQ1z6UiHbKP9_nRzIN9anprHqDGcR6q7O20q_yctZAHPjUCBi5AACv8L7YlRMx10gPnszGO6rLFqZFmmRkhtV0TIWuWqYxd1jO0wxam7i5qdEa19u4sfpHFZ9RGI_WHxINkH8FfvAwFLu0BMIIB6TCCAY8CAQEwCQYHKoZIzj0EATB7MQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExCzAJBgNVBAcMAlBBMRAwDgYDVQQKDAdOTkwsSW5jMQ0wCwYDVQQLDAREQU4xMRMwEQYDVQQDDApOTkwsSW5jIENBMRwwGgYJKoZIhvcNAQkBFg1ubmxAZ21haWwuY29tMB4XDTE0MDgyODIxMzU0MFoXDTE3MDUyNDIxMzU0MFowgYYxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJDQTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzEQMA4GA1UECgwHTk5MLEluYzENMAsGA1UECwwEREFOMTETMBEGA1UEAwwKTk5MLEluYyBDQTEcMBoGCSqGSIb3DQEJARYNbm5sQGdtYWlsLmNvbTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCGBt3CIjnDowzSiF68C2aErYXnDUsWXOYxqIPim0OWg9FFdUYCa6AgKjn1R99Ek2d803sGKROivnavmdVH-SnEwCQYHKoZIzj0EAQNJADBGAiEAzAQujXnSS9AIAh6lGz6ydypLVTsTnBzqGJ4ypIqy_qUCIQCFsuOEGcRV-o4GHPBph_VMrG3NpYh2GKPjsAim_cSNmQ";
     }
 
     public RegistrationRequestProcessing(String assertion) {
@@ -53,24 +57,22 @@ public class RegistrationRequestProcessing {
         fcParams.setFacetId(Constants.FACET_ID);
         fcParams.setChallenge(regRequest.getChallenge());
         response.setFinalChallengeParams(Base64.encodeBase64URLSafeString(gson.toJson(
-                fcParams).getBytes()));
+            fcParams).getBytes()));
         setAssertions(response);
         return response;
     }
 
     private void setAssertions(RegistrationResponse response) {
-        AuthenticatorRegistrationAssertion assertion = new AuthenticatorRegistrationAssertion();
-        assertion.setAssertionScheme("UAFV1TLV");
-        assertion.setAssertion(this.assertion);
-        AuthenticatorRegistrationAssertion[] assertions = new AuthenticatorRegistrationAssertion[1];
-        assertions[0] = assertion;
-        response.setAssertions(assertions);
+        response.getAssertions().add(
+            new AuthenticatorRegistrationAssertion()
+                .setAssertionScheme("UAFV1TLV")
+                .setAssertion(this.assertion));
     }
 
     private void setAppId(RegistrationRequest regRequest,
                           RegistrationResponse response) {
         if (regRequest.getOperationHeader().getAppId() == null
-                && regRequest.getOperationHeader().getAppId().isEmpty()) {
+            && regRequest.getOperationHeader().getAppId().isEmpty()) {
             response.getOperationHeader().setAppId(Constants.APP_ID);
         } else {
             setAppID(regRequest, response);
@@ -78,7 +80,7 @@ public class RegistrationRequestProcessing {
     }
 
     private RegistrationResponse setValidationError(
-            RegistrationResponse response, int[] errCodes) {
+        RegistrationResponse response, int[] errCodes) {
         // TODO Auto-generated method stub
         return null;
     }
