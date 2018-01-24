@@ -46,13 +46,13 @@ public class AuthenticationResponseProcessing {
         throws VersionException, ServerDataExpiredException, ServerDataSignatureNotMatchException,
         ServerDataCheckFailedException {
 
-        AuthenticatorRecord[] result = new AuthenticatorRecord[response.getAssertions().length];
+        AuthenticatorRecord[] result = new AuthenticatorRecord[response.getAssertions().size()];
         checkVersion(response.getOperationHeader().getProtocolVersion());
         checkServerData(response.getOperationHeader().getServerData(), result);
         FinalChallengeParams fcp = getFcp(response);
         checkFcp(fcp);
         for (int i = 0; i < result.length; i++) {
-            result[i] = processAssertions(response.getAssertions()[i], serverData);
+            result[i] = processAssertions(response.getAssertions().get(i), serverData);
         }
         return result;
     }

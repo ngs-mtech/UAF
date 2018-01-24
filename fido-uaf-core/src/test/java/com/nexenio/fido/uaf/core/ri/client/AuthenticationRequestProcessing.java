@@ -43,17 +43,15 @@ public class AuthenticationRequestProcessing {
     }
 
     private void setAssertions(AuthenticationResponse response) {
-        AuthenticatorSignAssertion assertion = new AuthenticatorSignAssertion();
-        assertion.setAssertionScheme("UAFV1TLV");
-        // Example from specs doc
-        assertion.setAssertion(
-                "Aj7WAAQ-jgALLgkAQUJDRCNBQkNEDi4FAAABAQEADy4gAHwyJAEX8t1b2wOxbaKOC5ZL7ACqbLo_TtiQfK3DzDsHCi4gAFwCUz"
-                        + "-dOuafXKXJLbkUrIzjAU6oDbP8B9iLQRmCf58fEC4AAAkuIABkwI"
-                        + "-f3bIe_Uin6IKIFvqLgAOrpk6_nr0oVAK9hIl82A0uBAACAAAABi5AADwDOcBvPslX2bRNy4SvFhAwhEAoBSGUitgMUNChgUSMxss3K3ukekq1paG7Fv1v5mBmDCZVPt2NCTnjUxrjTp4");
 
-        AuthenticatorSignAssertion[] assertions = new AuthenticatorSignAssertion[1];
-        assertions[0] = assertion;
-        response.setAssertions(assertions);
+        response.getAssertions().add(
+            new AuthenticatorSignAssertion()
+                .setAssertionScheme("UAFV1TLV")
+                .setAssertion(
+                    "Aj7WAAQ-jgALLgkAQUJDRCNBQkNEDi4FAAABAQEADy4gAHwyJAEX8t1b2wOxbaKOC5ZL7ACqbLo_TtiQfK3DzDsHCi4gAFwCUz"
+                        + "-dOuafXKXJLbkUrIzjAU6oDbP8B9iLQRmCf58fEC4AAAkuIABkwI"
+                        +
+                        "-f3bIe_Uin6IKIFvqLgAOrpk6_nr0oVAK9hIl82A0uBAACAAAABi5AADwDOcBvPslX2bRNy4SvFhAwhEAoBSGUitgMUNChgUSMxss3K3ukekq1paG7Fv1v5mBmDCZVPt2NCTnjUxrjTp4"));
     }
 
     private void setAppId(AuthenticationRequest request,
