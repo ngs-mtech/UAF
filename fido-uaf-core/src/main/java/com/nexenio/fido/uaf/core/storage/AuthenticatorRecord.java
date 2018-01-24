@@ -16,6 +16,7 @@
 
 package com.nexenio.fido.uaf.core.storage;
 
+import com.nexenio.fido.uaf.core.message.*;
 import lombok.Data;
 
 @Data
@@ -27,7 +28,7 @@ public class AuthenticatorRecord {
     private String keyId;
     private String deviceId;
     private String userName;
-    private String status;
+    private RecordStatus status;
 
     public String toString() {
         return getAaid() + DELIMITER + getKeyId();
